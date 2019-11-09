@@ -1,6 +1,6 @@
 # COMP-380-SE-Design
 
-Introduction to Software Engineering Design class
+The Final Countdown Web App Project for my Introduction to Software Engineering Design class
 
 Team name: Team Eternal Warriors
 
