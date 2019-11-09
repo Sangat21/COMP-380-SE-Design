@@ -1,0 +1,30 @@
+{{extend 'layout_loggedin.html'}}
+<br><br>
+<h1 align="center">REPORTS</h1>
+
+<div class="container-fluid">
+    <h2>
+        Tasks owned by you {{=auth.user.first_name}}
+    </h2>
+    {{=my_tasks_grid}}
+</div>
+
+{{for e in my_employees:}}
+    <div class="container-fluid">
+        <h2>
+            Tasks owned by your direct report: {{=e.first_name}} {{=e.last_name}}
+        </h2>
+        {{=all_tasks.find(lambda r: r.tasks.task_owner==e.id) }}
+    </div>
+{{pass}}
+<!--
+<div class="container">
+    <div class="row">
+        <div class="col-md-2 offset-md-1">
+            <a class="btn btn-primary" href="" role="button"> Edit Task </a>
+        </div>
+        <div class="col-md-2">
+            <a class="btn btn-primary" href="" role="button"> Delete Task</a>
+        </div>
+    </div>
+</div> -->

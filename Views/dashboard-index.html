@@ -1,0 +1,176 @@
+{{extend 'layout_loggedin.html'}}
+<br>
+<div class="container-fluid">
+    <h2 align="center">WELCOME TO THE DASHBOARD</h2>
+
+    <!-- Timer Section -->
+<div align="center" id="timerContainer">
+<div  class="timer" onclick="startTimer()">Start Timer!</div> <div class="start"> </div> <div class="end"> </div> <!--Start Timer button -->
+<button class="startTimer reset btn btn-primary" onclick="startTimer()" >
+    <i>Start</i>
+  </button>
+<button class="pauseTimer reset btn btn-primary" onclick="pauseTimer()" > <!-- Stop Timer button -->
+    <i>Stop</i>
+  </button>
+<button class="resetTimer reset btn btn-primary" onclick="resetTimer()"><i>Reset</i></button> <!-- Reset Timer button -->
+</div>
+
+<div class="container-fluid"> 
+    <h3>
+        Enter your task
+    </h3>
+    {{=tasks_form}} <!-- Show Task form -->
+</div>
+<div class="container-fluid">
+    <h3>
+        Your Tasks so far:
+    </h3>
+    <table class='table table-striped table-hover'>
+        <tr>
+            <th>Task Name</th>
+            <th>Description</th>
+            <th>Due Date</th>
+            <th>Estimate</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Tags</th>
+            <th>Add Tag</th>
+        </tr>
+        {{ for row in my_tasks: }}
+        <tr>
+            <td>{{=row.task_name}}</td>
+            <td>{{=row.task_description}}</td>
+            <td>{{=row.due_date}}</td>
+            <td>{{=row.estimate}}</td>
+            <td>{{=row.start_time}}</td>
+            <td>{{=row.end_time}}</td>
+            <td>
+                <!-- the following loop takes the junction table of tasks_tags and tag name and filters it by task ID -->
+                {{for t in tasks_tags_rows.find(lambda r: r.tasks_tags.task==row.id) :}}
+                <form enctype="multipart/form-data" action="#" method="post" class="form-inline">
+                    <input class="btn btn-primary" type="submit" value="{{=t.tags.tag_name}}" />
+                    <div style="display:none;">
+                        <input type="hidden" value="{{=t.tasks_tags.id}}" name="id" />
+                        <input value="del_task_tag_form" type="hidden" name="_formname" />
+                        <input value="{{=ttremoval.formkey}}" type="hidden" name="_formkey" />
+                    </div>
+                </form>
+                {{pass}}
+            </td>
+            <td>
+                <form enctype="multipart/form-data" action="#" method="post" class="form-inline">
+                    <select class="generic-widgit form-control" name="tag" >
+                        <option selected>Select a Tag</option>
+                        {{for tag in tags:}}
+                        <option value="{{=tag.id}}">{{=tag.tag_name}}</option>
+                        {{pass}}
+                    </select>
+                    <input class="btn btn-primary" type="submit" value="Submit" />
+                    <div style="display:none;">
+                        <input type="hidden" value="{{=row.id}}" name="task" />
+                        <input value="add_task_tag_form" type="hidden" name="_formname" />
+                        <input value="{{=add_form.formkey}}" type="hidden" name="_formkey" />
+                    </div>
+                </form>
+            </td>
+        </tr>
+        {{pass}}
+    </table>
+</div>
+
+<script>
+
+// document.querySelector('') returns all elements with the specified class in the quotes
+var startTimerButton = document.querySelector('.startTimer');
+var pauseTimerButton = document.querySelector('.pauseTimer');
+var timerDisplay = document.querySelector('.timer');
+var startDisplay = document.querySelector('.start');
+var endDisplay = document.querySelector('.end');
+    
+// Declare Variables
+var startTime;
+var updatedTime;
+var difference;
+var tInterval;
+var savedTime;
+var paused = 0;
+var running = 0;
+var d = new Date();
+    
+// Change Display Font Color and Size 
+startDisplay.style.fontSize = "20px";
+endDisplay.style.fontSize = "20px";
+timerDisplay.style.fontSize = "32px";
+timerDisplay.style.color = "green";
+
+// Function will be called when Start button is pressed
+function startTimer(){
+    // Statements will only execute is time isn't running and is reset
+  if(!running){  
+    if (!paused) { 
+        // get date and time
+    startTime = new Date().getTime();
+    var d = new Date();
+    var h = (d.getHours() < 10) ? "0" + d.getHours() : d.getHours();
+    var m = (d.getMinutes() < 10) ? "0" + d.getMinutes() : d.getMinutes();
+    var s = (d.getSeconds() < 10) ? "0" + d.getSeconds() : d.getSeconds();
+    startDisplay.innerHTML = "Start Time: " + h + ":" + m + ":" + s + "\n"; // display start time
+    tasks_start_time.value = h + ":" + m + ":" + s; // auto fill form with start time
+    endDisplay.innerHTML = "End Time: ";
+    tInterval = setInterval(getShowTime, 1); // Execute getShowTime function every millisecond
+    paused = 0; // timer isn't paused
+    running = 1; // timer is running
+    }
+  }
+}
+
+// Function will be called when Pause button is pressed
+function pauseTimer(){
+  if (!difference){
+    // function will only execute if timer isn't paused before
+  } else if (!paused) {
+      // get date and time
+    d = new Date();
+    h = (d.getHours() < 10) ? "0" + d.getHours() : d.getHours();
+    m = (d.getMinutes() < 10) ? "0" + d.getMinutes() : d.getMinutes();
+    s = (d.getSeconds() < 10) ? "0" + d.getSeconds() : d.getSeconds();
+    endDisplay.innerHTML = "End Time: " + h + ":" + m + ":" + s + "\n"; // show end time
+    tasks_end_time.value = h + ":" + m + ":" + s; // auto fill form with end time
+    clearInterval(tInterval); // stop executing getShowTime
+    savedTime = difference; // saved time is the difference in time when timer stopped and started
+    paused = 1; // timer is paused
+    running = 0; // timer isn't running
+  }
+}
+
+// Function will be called when reset button is pressed
+function resetTimer(){
+  if (paused){ // function will only execute if timer is paused
+  clearInterval(tInterval); // stop executing getShowTime
+  // Reset savedTime and difference
+  savedTime = 0;
+  difference = 0;
+  paused = 0; // timer isn't paused
+  running = 0; // timer isn't running
+  timerDisplay.innerHTML = 'Start Timer!';
+  }
+}
+
+// Function gets called repeatedly to show time
+function getShowTime(){
+  updatedTime = new Date().getTime(); // update current time 
+    difference =  updatedTime - startTime; // current time - start time === time passed
+  }
+  // Code below makes display run
+  var hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  var minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+  var seconds = Math.floor((difference % (1000 * 60)) / 1000);
+  
+  // show timer
+  hours = (hours < 10) ? "0" + hours : hours;
+  minutes = (minutes < 10) ? "0" + minutes : minutes;
+  seconds = (seconds < 10) ? "0" + seconds : seconds;
+  timerDisplay.innerHTML = hours + ':' + minutes + ':' + seconds; // Display timer
+}
+
+</script>
