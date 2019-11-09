@@ -3,6 +3,7 @@
 Introduction to Software Engineering Design class
 
 Team name: Team Eternal Warriors
+
 Team Members: Brian Mead, Khitab Anand, Sangat Shah
 
 *** NOTE: ***
