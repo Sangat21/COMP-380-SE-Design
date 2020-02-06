@@ -1,0 +1,16 @@
+# -*- coding: utf-8 -*-
+# try something like
+def index(): return dict(message="hello from reports.py")
+
+@auth.requires_login()
+def report_data():
+    #rows = db(db.tasks.task_owner==auth.user_id).select(orderby= ~(db.tasks.id) )
+    sub_join = db(db.tasks.task_owner == db.auth_user.supervisor_id).select(db.auth_user.id == auth.user_id)
+    user_scope = db(db.auth_user.supervisor_id==auth.user_id, id).select()
+    sub_rows = db(db.tasks).select()
+    
+    sub_grid = SQLFORM.grid(db.tasks.task_owner==user_scope, showbuttontext = True, create=False,
+                        exportclasses = dict(xml=False, html=False, tsv_with_hidden_cols = False, tsv = False, csv_with_hidden_cols=False ) )
+    grid = SQLFORM.grid(db.tasks.task_owner==auth.user_id, showbuttontext = True, create=False,
+                        exportclasses = dict(xml=False, html=False, tsv_with_hidden_cols = False, tsv = False, csv_with_hidden_cols=False ) )
+    return locals()
