@@ -8,8 +8,8 @@ Team Members: Brian Mead, Khitab Anand, Sangat Shah
 
 *** NOTE: ***
 1. This website doesn't exist anymore
-2. The code provided in the repository only contains files that our team has worked on.
-If all other files are found, we will add them the the repo as soon as possible.
+2. The code provided in the repository contains many file that we have not created/worked on.
+3. A Majority of the files we worked on are under the 'models', 'views', and 'controllers' directory. 
 
 
 The Final Countdown web app is a time tracking program to keep track of time spent on
