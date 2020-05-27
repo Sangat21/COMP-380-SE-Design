@@ -1,4 +1,4 @@
-# COMP-380-SE-Design
+# COMP-380-SE-Design Project
 
 The Final Countdown Web App Project for my Introduction to Software Engineering Design class
 
